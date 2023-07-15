@@ -2,6 +2,7 @@ import { Resolver, Query, Arg, Mutation, Int, Float } from 'type-graphql';
 import User from '../models/user';
 import Bet from '../models/bet';
 import { Sequelize } from 'sequelize';
+import { BetController } from '../controllers/bet';
 
 @Resolver()
 class BetResolver {
@@ -12,7 +13,12 @@ class BetResolver {
 
   @Query(() => [Bet])
   async getBetList(): Promise<Bet[]> {
-    return Bet.findAll();
+
+    let results = await Bet.findAll();
+
+    console.log("=====", JSON.stringify(results));
+    return results;
+    // return Bet.findAll();
   }
 
   @Query(() => [Bet])
@@ -40,20 +46,14 @@ class BetResolver {
       throw new Error('User not found');
     }
 
-    if (chance < 0 || chance > 100) {
-      throw new Error('The chance should be in the [1, 100] interval');
-    }
+    const betResults = BetController.processBet({betAmount, chance});
 
-    const payout = betAmount * (100 / chance);
-    const rand =  Math.random() * 100;
-    const win = rand <= chance;
-
-    const bet = new Bet({ betAmount, chance, payout, win, userId: userId });
+    const bet = new Bet({userId, betAmount, chance, payout: betResults.payout, win: betResults.win});
 
     user.balance -= betAmount;
 
-    if (win) {
-      user.balance += payout;
+    if (bet.win) {
+      user.balance += bet.payout;
     }
 
     await bet.save();
