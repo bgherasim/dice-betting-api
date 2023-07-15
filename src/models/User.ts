@@ -1,6 +1,6 @@
 import { Table, Column, Model, HasMany, DataType, PrimaryKey } from 'sequelize-typescript';
 import { Field, Int, ObjectType } from 'type-graphql';
-import Bet from './Bet';
+import Bet from './bet';
 
 @ObjectType()
 @Table

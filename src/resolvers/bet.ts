@@ -1,21 +1,10 @@
 import { Resolver, Query, Arg, Mutation, Int, Float } from 'type-graphql';
-import { Min, Max } from 'class-validator';
-import User from '../models/User';
-import Bet from '../models/Bet';
+import User from '../models/user';
+import Bet from '../models/bet';
 import { Sequelize } from 'sequelize';
 
 @Resolver()
 class BetResolver {
-  @Query(() => User, {nullable: true})
-  async getUser(@Arg('id', () => Int) id: number): Promise<User | null> {
-    return User.findByPk(id);
-  }
-
-  @Query(() => [User])
-  async getUserList(): Promise<User[]> {
-    return User.findAll();
-  }
-
   @Query(() => Bet, {nullable: true})
   async getBet(@Arg('id', () => Int) id: number): Promise<Bet | null> {
     return Bet.findByPk(id);

@@ -1,7 +1,7 @@
 import { ApolloServer } from 'apollo-server';
 import { Sequelize } from 'sequelize-typescript';
-import User from './models/User';
-import Bet from './models/Bet';
+import User from './models/user';
+import Bet from './models/bet';
 import schema from './schema';
 import { seed } from './seed';
 

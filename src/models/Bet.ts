@@ -1,6 +1,6 @@
 import { Table, Column, Model, DataType, ForeignKey, BelongsTo, Min } from 'sequelize-typescript';
 import { Field, Int, ObjectType } from 'type-graphql';
-import User from './User';
+import User from './user';
 
 @ObjectType()
 @Table({

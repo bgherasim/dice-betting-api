@@ -1,5 +1,5 @@
-import Bet from "./models/Bet";
-import User from "./models/User";
+import Bet from "./models/bet";
+import User from "./models/user";
 
 const usersData = [
   { id: 1, name: 'John Doe', balance: 1000.0 },

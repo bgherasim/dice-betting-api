@@ -1,8 +1,9 @@
 import { buildSchemaSync } from 'type-graphql';
-import BetResolver from './resolvers/BetResolver';
+import BetResolver from './resolvers/bet';
+import UserResolver from './resolvers/user';
 
 const schema = buildSchemaSync({
-  resolvers: [BetResolver],
+  resolvers: [UserResolver, BetResolver],
 });
 
 export default schema;
