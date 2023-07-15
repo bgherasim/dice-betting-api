@@ -4,7 +4,7 @@ export class BetController {
       throw new Error('The chance should be in the [1, 100] interval');
     }
     
-    const payout = betAmount * (100 / chance);
+    const payout = Number((betAmount * (100 / chance)).toFixed(2));
     const rand =  Math.random() * 100;
 
     const win = rand <= chance;
