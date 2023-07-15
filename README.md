@@ -9,7 +9,7 @@ To run the Dice Betting API, follow these steps:
 1. Clone the repository:
 
 ```shell
-git clone https://github.com/your-username/dice-betting-api.git
+git clone git@github.com:bgherasim/dice-betting-api.git
 ```
 2. Install the dependencies:
 

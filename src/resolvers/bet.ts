@@ -13,12 +13,7 @@ class BetResolver {
 
   @Query(() => [Bet])
   async getBetList(): Promise<Bet[]> {
-
-    let results = await Bet.findAll();
-
-    console.log("=====", JSON.stringify(results));
-    return results;
-    // return Bet.findAll();
+    return Bet.findAll();
   }
 
   @Query(() => [Bet])
