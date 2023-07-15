@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  graphql-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres-db
+    environment:
+      - DATABASE_HOST=postgres-db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=mydatabase
+      - DATABASE_USERNAME=myusername
+      - DATABASE_PASSWORD=mypassword
+
+  postgres-db:
+    image: postgres:latest
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myusername
+      - POSTGRES_PASSWORD=mypassword
+    volumes:
+      - ./data:/var/lib/postgresql/data:Z
