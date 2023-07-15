@@ -18,6 +18,12 @@ cd dice-betting-api
 npm install
 ```
 
+2. Run tests:
+
+```shell
+npm run test
+```
+
 3. Start the application using Docker Compose:
 
 ```shell
