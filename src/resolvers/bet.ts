@@ -1,8 +1,11 @@
-import { Resolver, Query, Arg, Mutation, Int, Float } from 'type-graphql';
+import { Resolver, Query, Arg, Mutation, Int, Float, Ctx } from 'type-graphql';
 import User from '../models/user';
 import Bet from '../models/bet';
 import { Sequelize } from 'sequelize';
 import { BetController } from '../controllers/bet';
+import { ApolloContext } from '../server';
+import { acquireLock, releaseLock } from '../redis';
+
 
 @Resolver()
 class BetResolver {
@@ -34,28 +37,54 @@ class BetResolver {
   async createBet(
     @Arg('userId') userId: number,
     @Arg('betAmount') betAmount: number,
-    @Arg('chance') chance: number
+    @Arg('chance') chance: number,
+    @Ctx() context: ApolloContext
   ): Promise<Bet> {
-    const user = await User.findByPk(userId);
-    if (!user) {
-      throw new Error('User not found');
+    const { sequelize, redis } = context;
+
+    try {
+      await acquireLock(redis, userId);
+    } catch (error) {
+      console.error(error);
+      throw new Error('An operation is already in progress for this user');
     }
 
-    const betResults = BetController.processBet({betAmount, chance});
+    try {
+      const user = await User.findByPk(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
 
-    const bet = new Bet({userId, betAmount, chance, payout: betResults.payout, win: betResults.win});
+      const betResults = BetController.processBet({ betAmount, chance });
 
-    user.balance -= betAmount;
+      const bet = new Bet({
+        userId,
+        betAmount,
+        chance,
+        payout: betResults.payout,
+        win: betResults.win,
+      });
 
-    if (bet.win) {
-      user.balance += bet.payout;
+      user.balance -= betAmount;
+
+      if (user.balance < 0) {
+        throw new Error('User balance cannot drop below 0');
+      }
+
+      if (bet.win) {
+        user.balance += bet.payout;
+      }
+
+      await sequelize.transaction(async (transaction) => {
+        await bet.save({ transaction });
+        await user.save({ transaction });  
+      });
+
+      return bet;
+    } finally {
+      await releaseLock(redis, userId);
     }
-
-    await bet.save();
-    await user.save();
-
-    return bet;
-  }
+  } 
 }
 
 export default BetResolver;

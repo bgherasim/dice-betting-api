@@ -10,12 +10,15 @@ services:
       - .:/app
     depends_on:
       - postgres-db
+      - redis
     environment:
       - DATABASE_HOST=postgres-db
       - DATABASE_PORT=5432
       - DATABASE_NAME=mydatabase
       - DATABASE_USERNAME=myusername
       - DATABASE_PASSWORD=mypassword
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
 
   postgres-db:
     image: postgres:latest
@@ -27,3 +30,10 @@ services:
       - POSTGRES_PASSWORD=mypassword
     volumes:
       - ./data:/var/lib/postgresql/data:Z
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./redis:/data

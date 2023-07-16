@@ -1,9 +1,16 @@
 import { ApolloServer } from 'apollo-server';
 import { Sequelize } from 'sequelize-typescript';
+import { Redis } from "ioredis";
+
 import User from './models/user';
 import Bet from './models/bet';
 import schema from './schema';
 import { seed } from './seed';
+
+export interface ApolloContext {
+  sequelize: Sequelize;
+  redis: Redis
+}
 
 async function startServer() {
   const sequelize = new Sequelize({
@@ -20,11 +27,19 @@ async function startServer() {
   await sequelize.sync({logging: console.log}); // TODO remove logging
 
   await seed();
+
+  const redis = new Redis({
+    host: process.env.REDIS_HOST,
+    port: parseInt(process.env.REDIS_PORT),
+  });
   
+  redis.on('error', err => console.log('Redis Client Error', err));
+  
+  const context: ApolloContext = { sequelize, redis };
 
   const apolloServer = new ApolloServer({
     schema,
-    context: { sequelize },
+    context,
   });
 
   const { url } = await apolloServer.listen(4000);

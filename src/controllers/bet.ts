@@ -9,7 +9,7 @@ export class BetController {
     const decimalBetAmount = new Decimal(betAmount);
     const decimalChance = new Decimal(chance);
 
-    const payout = Number(decimalBetAmount.dividedBy(decimalChance.dividedBy(100)).toFixed(2));
+    const payout = chance === 0 ? 0 : Number(decimalBetAmount.dividedBy(decimalChance.dividedBy(100)).toFixed(2));
     const rand = Math.random() * 100;
 
     const win = rand <= chance;
