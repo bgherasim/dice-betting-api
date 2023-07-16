@@ -24,7 +24,7 @@ async function startServer() {
 
   sequelize.addModels([User, Bet]);
 
-  await sequelize.sync({logging: console.log}); // TODO remove logging
+  await sequelize.sync();
 
   await seed();
 

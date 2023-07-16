@@ -131,3 +131,6 @@ dist
 
 # Postgres data
 data/*
+
+# Redis data
+redis/

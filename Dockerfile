@@ -1,6 +1,9 @@
 # Use an official Node.js runtime as the base image
 FROM node:14-alpine
 
+# Install bash
+RUN apk update && apk add --no-cache bash
+
 # Set the working directory inside the container
 WORKDIR /app
 
@@ -20,4 +23,7 @@ COPY . .
 EXPOSE 4000
 
 # Start the server
-CMD ["npm", "run", "dev"]
+CMD ["bash", "-c", "./wait-for-it.sh postgres-db:5432 -- npm run dev"]
+
+# Start the server
+# CMD ["npm", "run", "dev"]
